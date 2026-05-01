@@ -1,13 +1,26 @@
-# 学生信息列表（内存存储，程序关闭即消失）
-students = []
+import json
+import os
+
+DATA_FILE = "data.json"
+
+def _load_data():
+    if not os.path.exists(DATA_FILE):
+        return []
+    with open(DATA_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def _save_data(data):
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+students = _load_data()
 
 def add_student(name, score):
-    """添加一个学生"""
     students.append({"name": name, "score": score})
+    _save_data(students)
     print(f"已添加学生：{name}，成绩：{score}")
 
 def show_all_students():
-    """展示所有学生信息"""
     if not students:
         print("暂无学生信息。")
         return
@@ -16,7 +29,6 @@ def show_all_students():
         print(f"{i}. 姓名：{stu['name']}，成绩：{stu['score']}")
 
 def calculate_average():
-    """计算并返回平均分"""
     if not students:
         return 0
     total = sum(stu["score"] for stu in students)
